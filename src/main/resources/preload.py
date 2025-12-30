@@ -1,7 +1,6 @@
 import asyncio
+from asgiref.sync import sync_to_async, async_to_sync
 
-main_event_loop=asyncio.new_event_loop()
-asyncio.set_event_loop(main_event_loop)
 
 def completable_to_awaitable(completable_future):
     loop = asyncio.get_event_loop()
@@ -19,3 +18,22 @@ def completable_to_awaitable(completable_future):
     completable_future.exceptionally(complete_exceptionally)
 
     return future
+
+
+def str2bstr(s):
+    return s.encode("utf8")
+
+
+def bstr2str(bs):
+    return bs.decode("utf8")
+
+
+def bytesj2p(bs):
+    return bytes(b % 256 for b in bs)
+
+
+def wrap_no_arg_java_function(jf):
+    def f():
+        return jf(None)
+
+    return f
