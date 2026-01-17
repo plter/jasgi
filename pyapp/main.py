@@ -1,8 +1,12 @@
-from mysite.asgi import application as app
-import traceback
+from starlette.applications import Starlette
+from starlette.responses import JSONResponse
+from starlette.routing import Route
 
-async def application(*args, **kwargs):
-    try:
-        return await app(*args, **kwargs)
-    except:
-        traceback.print_exc()
+
+async def homepage(request):
+    return JSONResponse({'hello': 'world'})
+
+
+application = Starlette(debug=True, routes=[
+    Route('/', homepage),
+])
