@@ -6,6 +6,7 @@ import org.graalvm.polyglot.Source
 import org.graalvm.polyglot.Value
 import org.slf4j.LoggerFactory
 import top.yunp.jasgi.core.Project
+import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.function.Function
 
@@ -26,7 +27,14 @@ fun Application.initPythonRuntime() {
                     }')\n"
         )
         context.eval(Source.newBuilder(Constants.LANGUAGE_ID, javaClass.getResource("/preload.py")).build())
-        context.eval(Source.newBuilder(Constants.LANGUAGE_ID, Project.pythonAppRoot.resolve("main.py")).build())
+        val mainFilePath = environment.config.propertyOrNull("jasgi.main")?.getString() ?: "pyapp/main.py"
+        val mainFile = if (mainFilePath.matches(Regex("(^/|^\\w:).*"))) {
+            // Absolute path
+            File(mainFilePath)
+        } else {
+            Project.projectRoot.resolve(mainFilePath)
+        }
+        context.eval(Source.newBuilder(Constants.LANGUAGE_ID, mainFile).build())
 
         attributes[ApplicationKeys.PYTHON_RUNTIME_CONTEXT] = context
         val asgiApp = context.eval(Constants.LANGUAGE_ID, "application")
