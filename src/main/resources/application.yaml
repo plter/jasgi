@@ -7,3 +7,4 @@ ktor:
 
 jasgi:
   main: pyapp/main.py
+  entrypoint: application

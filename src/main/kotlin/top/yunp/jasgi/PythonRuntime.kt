@@ -37,7 +37,8 @@ fun Application.initPythonRuntime() {
         context.eval(Source.newBuilder(Constants.LANGUAGE_ID, mainFile).build())
 
         attributes[ApplicationKeys.PYTHON_RUNTIME_CONTEXT] = context
-        val asgiApp = context.eval(Constants.LANGUAGE_ID, "application")
+        val entrypoint = environment.config.propertyOrNull("jasgi.entrypoint")?.getString() ?: "application"
+        val asgiApp = context.eval(Constants.LANGUAGE_ID, entrypoint)
         attributes[ApplicationKeys.ASGI_APP] = asgiApp
 
         val completableToAwaitable = context.eval(Constants.LANGUAGE_ID, "completable_to_awaitable")
